@@ -66,15 +66,15 @@ JuegoManager jm;
     @Test
     public void testListarObjetosporPrecio() {
         List<Objeto> lista = this.jm.listarObjetosporPrecio();
-        assertEquals("Escudo", lista.get(0).getNombre());
+        assertEquals("Escudo", lista.get(2).getNombre());
         assertEquals("Espada", lista.get(1).getNombre());
-        assertEquals("Pocion", lista.get(2).getNombre());
+        assertEquals("Pocion", lista.get(0).getNombre());
     }
     @Test
     public void testComprarObjeto() {
         this.jm.comprarObjeto("Vicenç", "Espada");
-        //this.jm.comprarObjeto("David", "Escudo");
-        //this.jm.comprarObjeto("Vicenç", "Pocion");
+
+        //assertEquals(40.0, this.jm.getListaUsuarios().get("Vicenç").getDsaCoins());
     }
     @Test
     public void testListarObjetosporUsuario() {

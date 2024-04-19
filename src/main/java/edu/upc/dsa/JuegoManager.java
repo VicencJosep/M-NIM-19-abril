@@ -12,6 +12,7 @@ public interface JuegoManager {
     public List<Usuario> listarUsuariosporAlf();
     public void Login(String correo, String password);
     public void añadirObjeto(String nombre, String descripcion, double coins);
+    public void añadirObjeto(Objeto objeto);
     public List<Objeto> listarObjetosporPrecio();
     public void comprarObjeto(String nombreUsuario, String nombreObjeto);
     public List<Objeto> listarObjetosporUsuario(String nombreUsuario);

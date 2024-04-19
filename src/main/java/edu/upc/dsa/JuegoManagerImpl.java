@@ -1,7 +1,7 @@
 package edu.upc.dsa;
 
 import edu.upc.dsa.models.Objeto;
-import edu.upc.dsa.models.Track;
+
 import edu.upc.dsa.models.Usuario;
 import org.apache.log4j.Logger;
 
@@ -36,12 +36,44 @@ public class JuegoManagerImpl implements JuegoManager{
     }
 
     public void registrarUsuario(String nombre, String apellidos, String fechadenacimiento, String correo, String password){
-        Usuario u = new Usuario(nombre, apellidos, fechadenacimiento, correo, password);
-        this.listaUsuarios.put(u.getNombre(), u);
+        logger.info("Se ha intentado registrar al usuario con nombre: " + nombre + " y correo: " + correo);
+        boolean encontrado = false;
+        for (Usuario usuario : listaUsuarios.values()) {
+            if (usuario.getCorreo().equals(correo)) {
+
+                encontrado = true;
+                break;
+            }
+        }
+        if(encontrado) logger.info("El usuario con correo: " + correo + " ya existe");
+        else
+        {
+            logger.info("El usuario con nombre: " + nombre + " y correo: " + correo + " se ha registrado correctamente");
+            Usuario u = new Usuario(nombre, apellidos, fechadenacimiento, correo, password);
+            this.listaUsuarios.put(u.getNombre(), u);
+        }
+
 
     }
     public void  registrarUsuario(Usuario u){
-        this.listaUsuarios.put(u.getNombre(), u);
+        logger.info("Se ha intentado registrar al usuario con nombre: " + u.getNombre() + " y correo: " + u.getCorreo());
+
+        boolean encontrado = false;
+        for (Usuario usuario : listaUsuarios.values()) {
+            if (usuario.getCorreo().equals(u.getCorreo())) {
+
+                encontrado = true;
+                break;
+            }
+        }
+        if(encontrado) logger.info("El usuario con correo: " + u.getCorreo() + " ya existe");
+        else
+        {
+            logger.info("El usuario con nombre se ha registrado correctamente");
+
+            this.listaUsuarios.put(u.getNombre(), u);
+        }
+
     }
     public List<Usuario> listarUsuariosporAlf(){
         // Convert HashMap to List
@@ -78,34 +110,48 @@ public class JuegoManagerImpl implements JuegoManager{
 
     }
     public void añadirObjeto(String nombre, String descripcion, double coins){
+        logger.info("Añadiendo objeto: " + nombre);
         Objeto o = new Objeto(nombre, descripcion, coins);
         this.listaObjetos.add(o);
+    }
+    public void añadirObjeto(Objeto objeto){
+        logger.info("Añadiendo objeto: " + objeto.getNombre());
+        this.listaObjetos.add(objeto);
     }
 
     public List<Objeto> listarObjetosporPrecio()
     {
         Comparator<Objeto> pricecomparator = Comparator.comparingDouble(Objeto::getCoins);
-        listaObjetos.sort(pricecomparator);
+        listaObjetos.sort(pricecomparator.reversed());
         return listaObjetos;
 
     }
     public void comprarObjeto(String nombreUsuario, String nombreObjeto)
     {
-        Usuario u = listaUsuarios.get(nombreUsuario);
-        Objeto o = null;
-        for(Objeto objeto: listaObjetos)
-        {
-            if(objeto.getNombre().equals(nombreObjeto))
+        if(listaUsuarios.get(nombreUsuario)==null) logger.info("El usuario no existe");
+        else{
+            Usuario u = listaUsuarios.get(nombreUsuario);
+            Objeto o = null;
+            for(Objeto objeto: listaObjetos)
             {
-                o = objeto;
+                if(objeto.getNombre().equals(nombreObjeto))
+                {
+                    o = objeto;
+                }
+            }
+            if(o.getCoins() <= u.getDsaCoins())
+            {
+                u.setDsaCoins(u.getDsaCoins() - o.getCoins());
+                logger.info("Al usuario le quedan:" + u.getDsaCoins() + " coins");
+                u.getListaObjetosUsuario().add(o);
+                logger.info("Se ha comprado correctamente el objeto");
+            }
+            else
+            {
+                logger.info("No se ha podido comprar el objeto");
             }
         }
-        if(o.getCoins() <= u.getDsaCoins())
-        {
-            u.setDsaCoins(u.getDsaCoins() - o.getCoins());
-            u.getListaObjetosUsuario().add(o);
 
-        }
     }
     public List<Objeto> listarObjetosporUsuario(String nombreUsuario){
         Usuario u = listaUsuarios.get(nombreUsuario);
